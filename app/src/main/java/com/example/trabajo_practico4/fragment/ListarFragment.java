@@ -45,9 +45,13 @@ public class ListarFragment extends Fragment {
         viewModel.getProductosLiveData().observe(getViewLifecycleOwner(), productos -> {
             if (productos != null) {
                 adapter.setListaProductos(productos);
+            }
+        });
 
-                // Mostrar/ocultar mensaje de lista vacía
-                if (productos.isEmpty()) {
+        // Observar estado de lista vacía
+        viewModel.getListaVaciaLiveData().observe(getViewLifecycleOwner(), estaVacia -> {
+            if (estaVacia != null) {
+                if (estaVacia) {
                     binding.tvEmpty.setVisibility(View.VISIBLE);
                     binding.recyclerViewProductos.setVisibility(View.GONE);
                 } else {

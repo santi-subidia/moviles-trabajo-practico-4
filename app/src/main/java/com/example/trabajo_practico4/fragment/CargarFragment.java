@@ -12,7 +12,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.trabajo_practico4.databinding.FragmentCargarBinding;
-import com.example.trabajo_practico4.modelo.Producto;
 import com.example.trabajo_practico4.viewmodel.ProductoViewModel;
 
 public class CargarFragment extends Fragment {
@@ -39,49 +38,26 @@ public class CargarFragment extends Fragment {
         viewModel.getMensajeError().observe(getViewLifecycleOwner(), mensaje -> {
             if (mensaje != null && !mensaje.isEmpty()) {
                 Toast.makeText(getContext(), mensaje, Toast.LENGTH_SHORT).show();
-
-                // Si fue exitoso, limpiar los campos
-                if (mensaje.equals("Producto agregado correctamente")) {
-                    binding.etCodigo.setText("");
-                    binding.etDescripcion.setText("");
-                    binding.etPrecio.setText("");
-                    binding.etCodigo.requestFocus();
-                }
             }
         });
 
-        // Botón guardar
+        // Observar éxito de operación para limpiar campos
+        viewModel.getProductoAgregadoExito().observe(getViewLifecycleOwner(), exito -> {
+            if (exito != null && exito) {
+                binding.etCodigo.setText("");
+                binding.etDescripcion.setText("");
+                binding.etPrecio.setText("");
+                binding.etCodigo.requestFocus();
+            }
+        });
+
+        // Botón guardar, se delega toda la lógica de validación al ViewModel
         binding.btnGuardar.setOnClickListener(v -> {
             String codigoStr = binding.etCodigo.getText().toString().trim();
             String descripcion = binding.etDescripcion.getText().toString().trim();
             String precioStr = binding.etPrecio.getText().toString().trim();
 
-            // Validaciones básicas en la vista
-            if (codigoStr.isEmpty()) {
-                Toast.makeText(getContext(), "Ingrese el código", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            if (descripcion.isEmpty()) {
-                Toast.makeText(getContext(), "Ingrese la descripción", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            if (precioStr.isEmpty()) {
-                Toast.makeText(getContext(), "Ingrese el precio", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            try {
-                int codigo = Integer.parseInt(codigoStr);
-                double precio = Double.parseDouble(precioStr);
-
-                Producto producto = new Producto(codigo, descripcion, precio);
-                viewModel.agregarProducto(producto);
-
-            } catch (NumberFormatException e) {
-                Toast.makeText(getContext(), "Código o precio inválido", Toast.LENGTH_SHORT).show();
-            }
+            viewModel.agregarProducto(codigoStr, descripcion, precioStr);
         });
     }
 

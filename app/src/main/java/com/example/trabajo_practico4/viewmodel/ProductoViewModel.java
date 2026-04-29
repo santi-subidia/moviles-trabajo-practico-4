@@ -4,6 +4,7 @@ import android.app.Application;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.trabajo_practico4.MainActivity;
@@ -18,45 +19,83 @@ public class ProductoViewModel extends AndroidViewModel {
 
     private MutableLiveData<List<Producto>> productosLiveData;
     private MutableLiveData<String> mensajeError;
+    private MutableLiveData<Boolean> productoAgregadoExito;
+    private MutableLiveData<Boolean> listaVaciaLiveData;
 
     public ProductoViewModel(@NonNull Application application) {
         super(application);
         productosLiveData = new MutableLiveData<>();
         mensajeError = new MutableLiveData<>();
+        productoAgregadoExito = new MutableLiveData<>();
+        listaVaciaLiveData = new MutableLiveData<>();
     }
 
-    public MutableLiveData<List<Producto>> getProductosLiveData() {
+    public LiveData<List<Producto>> getProductosLiveData() {
         return productosLiveData;
     }
 
-    public MutableLiveData<String> getMensajeError() {
+    public LiveData<String> getMensajeError() {
         return mensajeError;
     }
 
-    public void agregarProducto(Producto p) {
-        // Validar que los campos no estén vacíos
-        if (p.getDescripcion() == null || p.getDescripcion().trim().isEmpty()) {
-            mensajeError.setValue("La descripción no puede estar vacía");
+    public LiveData<Boolean> getProductoAgregadoExito() {
+        return productoAgregadoExito;
+    }
+
+    public LiveData<Boolean> getListaVaciaLiveData() {
+        return listaVaciaLiveData;
+    }
+
+    public void agregarProducto(String codigoStr, String descripcionStr, String precioStr) {
+        // Reset success state
+        productoAgregadoExito.setValue(false);
+
+        // Validaciones básicas de campos vacíos
+        if (codigoStr == null || codigoStr.isEmpty()) {
+            mensajeError.setValue("Ingrese el código");
+            return;
+        }
+        if (descripcionStr == null || descripcionStr.isEmpty()) {
+            mensajeError.setValue("Ingrese la descripción");
+            return;
+        }
+        if (precioStr == null || precioStr.isEmpty()) {
+            mensajeError.setValue("Ingrese el precio");
             return;
         }
 
-        if (p.getPrecio() <= 0) {
-            mensajeError.setValue("El precio debe ser mayor a 0");
-            return;
-        }
+        try {
+            int codigo = Integer.parseInt(codigoStr);
+            double precio = Double.parseDouble(precioStr);
 
-        // Validar que el código no exista
-        for (Producto producto : MainActivity.listaProductos) {
-            if (producto.getCodigo() == p.getCodigo()) {
-                mensajeError.setValue("Código duplicado");
+            if (precio <= 0) {
+                mensajeError.setValue("El precio debe ser mayor a 0");
                 return;
             }
-        }
 
-        // Si es válido, añadir a la lista y actualizar LiveData
-        MainActivity.listaProductos.add(p);
-        mensajeError.setValue("Producto agregado correctamente");
-        productosLiveData.setValue(new ArrayList<>(MainActivity.listaProductos));
+            // Validar que el código no exista
+            for (Producto producto : MainActivity.listaProductos) {
+                if (producto.getCodigo() == codigo) {
+                    mensajeError.setValue("Código duplicado");
+                    return;
+                }
+            }
+
+            // Crear el producto si las validaciones pasan
+            Producto p = new Producto(codigo, descripcionStr, precio);
+
+            // Si es válido, añadir a la lista y actualizar LiveData
+            MainActivity.listaProductos.add(p);
+            mensajeError.setValue("Producto agregado correctamente");
+            productoAgregadoExito.setValue(true);
+            
+            ArrayList<Producto> listaActualizada = new ArrayList<>(MainActivity.listaProductos);
+            productosLiveData.setValue(listaActualizada);
+            listaVaciaLiveData.setValue(listaActualizada.isEmpty());
+
+        } catch (NumberFormatException e) {
+            mensajeError.setValue("Código o precio inválido");
+        }
     }
 
     public void cargarProductosOrdenados() {
@@ -68,5 +107,6 @@ public class ProductoViewModel extends AndroidViewModel {
             }
         });
         productosLiveData.setValue(listaOrdenada);
+        listaVaciaLiveData.setValue(listaOrdenada.isEmpty());
     }
 }
