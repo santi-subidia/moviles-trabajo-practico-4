@@ -33,22 +33,18 @@ public class ListarFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Instanciar ViewModel compartido con la Activity
         viewModel = new ViewModelProvider(requireActivity()).get(ProductoViewModel.class);
 
-        // Configurar RecyclerView
         adapter = new ProductoAdapter();
         binding.recyclerViewProductos.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.recyclerViewProductos.setAdapter(adapter);
 
-        // Observar cambios en la lista de productos
         viewModel.getProductosLiveData().observe(getViewLifecycleOwner(), productos -> {
             if (productos != null) {
                 adapter.setListaProductos(productos);
             }
         });
 
-        // Observar estado de lista vacía
         viewModel.getListaVaciaLiveData().observe(getViewLifecycleOwner(), estaVacia -> {
             if (estaVacia != null) {
                 if (estaVacia) {
@@ -61,7 +57,6 @@ public class ListarFragment extends Fragment {
             }
         });
 
-        // Cargar productos ordenados
         viewModel.cargarProductosOrdenados();
     }
 

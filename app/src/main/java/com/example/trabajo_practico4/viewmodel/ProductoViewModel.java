@@ -55,10 +55,8 @@ public class ProductoViewModel extends AndroidViewModel {
     }
 
     public void agregarProducto(String codigoStr, String descripcionStr, String precioStr) {
-        // Reset success state
         productoAgregadoExito.setValue(false);
 
-        // Validaciones básicas de campos vacíos
         if (codigoStr == null || codigoStr.isEmpty()) {
             mensajeError.setValue("Ingrese el código");
             return;
@@ -81,7 +79,6 @@ public class ProductoViewModel extends AndroidViewModel {
                 return;
             }
 
-            // Validar que el código no exista
             for (Producto producto : MainActivity.listaProductos) {
                 if (producto.getCodigo() == codigo) {
                     mensajeError.setValue("Código duplicado");
@@ -89,10 +86,8 @@ public class ProductoViewModel extends AndroidViewModel {
                 }
             }
 
-            // Crear el producto si las validaciones pasan
             Producto p = new Producto(codigo, descripcionStr, precio);
 
-            // Si es válido, añadir a la lista y actualizar LiveData
             MainActivity.listaProductos.add(p);
             mensajeError.setValue("Producto agregado correctamente");
             productoAgregadoExito.setValue(true);

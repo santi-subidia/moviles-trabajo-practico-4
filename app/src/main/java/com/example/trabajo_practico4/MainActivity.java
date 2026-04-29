@@ -15,7 +15,6 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    // Repositorio estático en memoria (requerimiento)
     public static ArrayList<Producto> listaProductos = new ArrayList<>();
 
     private ActivityMainBinding binding;
@@ -26,17 +25,14 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // Botón Cargar → muestra CargarFragment
         binding.btnCargar.setOnClickListener(v -> {
             reemplazarFragmento(new CargarFragment());
         });
 
-        // Botón Listar → muestra ListarFragment
         binding.btnListar.setOnClickListener(v -> {
             reemplazarFragmento(new ListarFragment());
         });
 
-        // Botón Salir → diálogo de confirmación
         binding.btnSalir.setOnClickListener(v -> {
             mostrarDialogoSalir();
         });

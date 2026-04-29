@@ -31,10 +31,8 @@ public class CargarFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Instanciar ViewModel compartido con la Activity
         viewModel = new ViewModelProvider(requireActivity()).get(ProductoViewModel.class);
 
-        // Observar mensajes de error/éxito
         viewModel.getMensajeError().observe(getViewLifecycleOwner(), mensaje -> {
             if (mensaje != null && !mensaje.isEmpty()) {
                 Toast.makeText(getContext(), mensaje, Toast.LENGTH_SHORT).show();
@@ -42,7 +40,6 @@ public class CargarFragment extends Fragment {
             }
         });
 
-        // Observar éxito de operación para limpiar campos
         viewModel.getProductoAgregadoExito().observe(getViewLifecycleOwner(), exito -> {
             if (exito != null && exito) {
                 binding.etCodigo.setText("");
@@ -53,7 +50,6 @@ public class CargarFragment extends Fragment {
             }
         });
 
-        // Botón guardar, se delega toda la lógica de validación al ViewModel
         binding.btnGuardar.setOnClickListener(v -> {
             String codigoStr = binding.etCodigo.getText().toString().trim();
             String descripcion = binding.etDescripcion.getText().toString().trim();

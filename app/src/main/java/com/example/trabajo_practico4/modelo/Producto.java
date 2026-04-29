@@ -12,7 +12,6 @@ public class Producto {
         this.precio = precio;
     }
 
-    // Getters
     public int getCodigo() {
         return codigo;
     }
@@ -25,7 +24,6 @@ public class Producto {
         return precio;
     }
 
-    // Setters
     public void setCodigo(int codigo) {
         this.codigo = codigo;
     }
