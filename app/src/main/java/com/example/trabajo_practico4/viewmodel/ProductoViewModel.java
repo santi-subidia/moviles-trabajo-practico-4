@@ -46,6 +46,14 @@ public class ProductoViewModel extends AndroidViewModel {
         return listaVaciaLiveData;
     }
 
+    public void resetMensajeError() {
+        mensajeError.setValue(null);
+    }
+
+    public void resetProductoAgregadoExito() {
+        productoAgregadoExito.setValue(false);
+    }
+
     public void agregarProducto(String codigoStr, String descripcionStr, String precioStr) {
         // Reset success state
         productoAgregadoExito.setValue(false);

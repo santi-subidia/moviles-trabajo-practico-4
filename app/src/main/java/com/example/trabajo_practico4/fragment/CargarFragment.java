@@ -38,6 +38,7 @@ public class CargarFragment extends Fragment {
         viewModel.getMensajeError().observe(getViewLifecycleOwner(), mensaje -> {
             if (mensaje != null && !mensaje.isEmpty()) {
                 Toast.makeText(getContext(), mensaje, Toast.LENGTH_SHORT).show();
+                viewModel.resetMensajeError();
             }
         });
 
@@ -48,6 +49,7 @@ public class CargarFragment extends Fragment {
                 binding.etDescripcion.setText("");
                 binding.etPrecio.setText("");
                 binding.etCodigo.requestFocus();
+                viewModel.resetProductoAgregadoExito();
             }
         });
 
